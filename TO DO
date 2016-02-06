@@ -1,0 +1,18 @@
+TO DO
++ get rid of dt
++ first just make it with cells
++ plot component that gets its own width and height and has scales
++ add axes to plot
++ style road
++ color scale
++ color cars
++ reducer for time
++ add slider to control time
++ lay out the page
+
+CONSTANTS
++ numcars
++ 
+
+
++ go ahead and just calcualte the whole history of the system first time
