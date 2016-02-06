@@ -2,48 +2,55 @@ import React from 'react';
 import './style-plot.scss';
 import Street from './street';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-import { connect } from 'react-redux';
-import ReactDOM from 'react-dom';
+import {
+	connect
+}
+from 'react-redux';
+import constants from '../../constants/constants';
+import _ from 'lodash';
+const StreetFactory = React.createFactory(Street);
+const {
+	NUM_CELLS
+} = constants;
 
-const PlotView = ({xScale, yScale, width, height, mar, cells, colorScale, time}) => {
-	let street = Street({
-		yScale,
-		xScale,
-		height,
-		width,
-		cells,
-		colorScale,
-		time
-	});
-
+const PlotView = ({
+	xScale, yScale, width, height, mar, time, history
+}) => {
+	let streets = _.map(history,(d,i) => {
+			return StreetFactory({
+				yScale,
+				xScale,
+				time: i,
+				cells: d,
+				key: "street" + i,
+				display: i<=time
+			});
+		});
 	return (
-		<svg width={width + mar.left + mar.right} height={height + mar.top + mar.bottom} >
-			<g className="g-main" transform={`translate(${mar.left},${mar.top})`}>
-				<rect className="background" width={width} height={height}/>
-				{street}
+		<svg 
+			width={width + mar.left + mar.right} 
+			height={height + mar.top + mar.bottom} >
+			<g 
+				className="g-main" 
+				transform={`translate(${mar.left},${mar.top})`}>
+				<rect 
+					className="background" 
+					width={width} 
+					height={height}/>
+				{streets}
 			</g>
 		</svg>
-		);
+	);
 };
 
 const PlotComponent = React.createClass({
 	mixins: [PureRenderMixin],
-	componentDidMount(){
-		window.addEventListener('resize', this._resize);
-	},
+
 	getInitialState() {
 		return {
-			width: 300,
+			width: 700,
 			height: 300,
 		};
-	},
-	_resize(){
-		// let parent = ReactDOM.findDOMNode(this);
-		// this.setState({
-		// 	width: React.getDOMNode(this).
-		// 	// width: window.clientWidthp*.3
-		// });
-		console.log('asdf');
 	},
 	_mar: {
 		left: 30,
@@ -56,28 +63,28 @@ const PlotComponent = React.createClass({
 		return this.state.width * (v - this.props.time_range[0]) / (this.props.time_range[1] - this.props.time_range[0]);
 	},
 	_yScale(v) {
-		return this.state.height * v / 100; //LATER CHANGE THIS TO NUM_CELLS;
+		return this.state.height * v / NUM_CELLS; //LATER CHANGE THIS TO NUM_CELLS;
 	},
 	render() {
 		return PlotView({
 			xScale: this._xScale,
 			yScale: this._yScale,
+			mar: this._mar,
 			width: this.state.width,
 			height: this.state.height,
-			cells: this.props.cells,
-			colorScale: this.props.colorScale,
-			mar: this._mar,
-			time: this.props.time
+			time: this.props.time,
+			history: this.props.history
 		});
 	}
 });
 
-
-const mapStateToProps = ({cells, time_range, colorScale, time}) => ({
-		cells,
-		time_range,
-		colorScale,
-		time
+const mapStateToProps = ({
+	cells, time_range, time, history
+}) => ({
+	cells,
+	history,
+	time_range,
+	time
 });
 
 const Plot = connect(mapStateToProps)(PlotComponent);

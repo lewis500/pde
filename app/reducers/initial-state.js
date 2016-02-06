@@ -8,15 +8,10 @@ const cells = _.map(_.range(NUM_CELLS), (d) => {
 	};
 });
 
-const colorScale = d3.scale.linear()
-	.domain([0, 1])
-	.range(['red', 'blue']);
-
 const initialState = {
-	time: 0,
+	time: 1,
 	cells,
 	time_range: [0, 100],
-	colorScale
 };
 
 export default initialState;

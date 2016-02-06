@@ -1,6 +1,7 @@
 TO DO
-+ get rid of dt
-+ first just make it with cells
++ draw the history
++ get rid of the rotation
+
 + plot component that gets its own width and height and has scales
 + add axes to plot
 + style road
@@ -14,5 +15,7 @@ CONSTANTS
 + numcars
 + 
 
+
+====MEDIUM TERM=====
 
 + go ahead and just calcualte the whole history of the system first time

@@ -1,3 +1,3 @@
 export default {
-	NUM_CELLS: 100
+	NUM_CELLS: 300
 }

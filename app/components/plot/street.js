@@ -1,40 +1,56 @@
 import React from 'react';
 import './style-street.scss';
-const {
-	g, rect
-} = React.DOM;
+import PureRenderMixin from 'react-addons-pure-render-mixin';
+import _ from 'lodash';
 
-const Cell = (x,fill,key) => {
-	return rect({
-		className: 'cell',
-		transform: `translate(${x},0)`,
-		height: 8,
-		width: 8,
-		fill,
-		key
-	});
-};
+const Cells = React.createClass({
+	mixins: [PureRenderMixin],
+	_renderRect(d) {
+		return (
+			<rect 
+				className='cell'
+				transform={`translate(0,${this.props.yScale(d.x)})`}
+				fill={this.props.colorScale(d.k)}
+				key={d.x}
+			/>
+		);
+	},
+	render() {
+		let {
+			cells, colorScale, yScale
+		} = this.props;
+		return (
+			<g>
+				{_.map(cells, this._renderRect)}
+    	</g>
+		);
+	}
+});
 
-const Street = ({
-	height, width, time, cells, xScale, yScale, colorScale
-}) => {
-	let cell_rects = _.map(cells, (d) => {
-			return Cell(yScale(d.x),colorScale(d.k),d.x);
-		}),
-		background = rect({
-			className: 'background',
-			height: height,
-			width: width
-		}),
-		gCells = g({
-			transform: "rotate(90)",
-			className: "g-cells"
-		}, cell_rects);
-
-	return g({
-		className: "g-street",
-		transform: `translate(${xScale(time)},0)`
-	}, background, gCells);
-};
+const Street = React.createClass({
+	mixins: [PureRenderMixin],
+	_colorScale: d3.scale.linear()
+		.domain([0, 1])
+		.interpolate(d3.interpolateHcl)
+		.range(['#29B6F6', '#01579B']),
+	render() {
+		let {
+			time, xScale, yScale, display, cells
+		} = this.props;
+		return (
+			<g 
+				className="g-street"	
+				transform={`translate(${xScale(time)},0)`}
+				style={{visibility: display ? 'visible' : 'hidden'}} 
+			>
+				<Cells 
+					colorScale={this._colorScale} 
+					yScale={yScale} 
+					cells={cells} 
+				/>
+			</g>
+		);
+	}
+})
 
 export default Street;
