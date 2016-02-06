@@ -6,6 +6,11 @@ const q = (k) => {
 	return Math.min(0.5 - 0.5 * k, k);
 };
 
+const colorScale = d3.scale.linear()
+		.domain([0, 1])
+		.interpolate(d3.interpolateHcl)
+		.range(['#29B6F6', '#01579B']);
+
 const reduceCell = (cell, i, l) => {
 	if (_.contains([l.length - 1, 0], i)) return cell;
 	const k0 = cell.k,
@@ -15,7 +20,8 @@ const reduceCell = (cell, i, l) => {
 		outflow = Math.min(k0, q(next.k), 1 - next.k);
 	return {
 		...cell,
-		k: outflow - inflow
+		k: outflow - inflow,
+		fill: colorScale(outflow - inflow)
 	};
 };
 

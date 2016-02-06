@@ -1,8 +1,9 @@
 import { connect } from 'react-redux';
 import React from 'react';
-import Plot from '../plot/plot.js';
+import Plot from '../plot/plot2.js';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 const {input} = React.DOM;
+import './style-app.scss';
 
 const AppComponent = React.createClass({
   mixins: [PureRenderMixin],
@@ -11,14 +12,18 @@ const AppComponent = React.createClass({
   },
   render() {
     return (
-      <div>
-				<Plot />
-		    <input type="range" 
-					min="0" 
-					max="100" 
-					step='1' 
-					onChange={this.onSlide} 
-					value={this.props.time}/>
+      <div className='flex-container main'>
+				<div style={{display: 'flex'}}>
+					<Plot />
+				</div>
+				<div style={{display: 'flex'}}>
+			    <input type="range" 
+						min="0" 
+						max="100" 
+						step='1' 
+						onChange={this.onSlide} 
+						value={this.props.time}/>
+				</div>
 			</div>
       );
   }

@@ -2,5 +2,12 @@
 
 .background{
 	fill: $md-grey-100;
-	// opacity: .5;
+}
+
+svg{
+	position: absolute;
+}
+
+#plot{
+	position: relative;
 }
