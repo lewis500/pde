@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "Bus control form",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "deploy": "NODE_ENV=production webpack -p --config webpack.production.config.js"
   },
   "repository": {
     "type": "git"
