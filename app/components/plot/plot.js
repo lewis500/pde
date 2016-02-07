@@ -14,18 +14,28 @@ const {
 } = constants;
 
 const Rects = React.createClass({
-	render() {
+	mixins: [PureRenderMixin],
+	componentWillUnmount() {
 		let {
 			time, xScale, yScale, cars, ctx, h
 		} = this.props,
 			y = yScale(time);
-		_.forEach(cars, (d,i,l) => {
-			if((i===l.length) || (i ==0)) return;
-			let x = xScale(d.x - d.gap0/2),
-				w = xScale(d.x + d.gap1/2) - x;
+		this.props.ctx.clearRect(0, y-h, xScale(NUM_CELLS), 2*h);
+	},
+	componentWillMount() {
+		let {
+			time, xScale, yScale, cars, ctx, h
+		} = this.props,
+			y = yScale(time);
+		_.forEach(cars, (d, i, l) => {
+			if ((i === l.length) || (i == 0)) return;
+			let x = xScale(d.x - d.gap0 / 2),
+				w = xScale(d.x + d.gap1 / 2) - x;
 			ctx.fillStyle = d.fill;
 			ctx.fillRect(x, y, w, h);
 		});
+	},
+	render() {
 		return null;
 	}
 });
@@ -46,21 +56,25 @@ const PlotComponent = React.createClass({
 		right: 5,
 		bottom: 30
 	},
-	componentDidMount(){
+	componentDidMount() {
 		let xAxis = d3.svg.axis()
-			.scale(d3.scale.linear().domain([0,NUM_CELLS]).range([0,this.state.width]))
+			.scale(d3.scale.linear()
+				.domain([0, NUM_CELLS])
+				.range([0, this.state.width]))
 			.tickSize(-this.state.height);
 		d3.select(this.refs.xAxis)
 			.call(xAxis);
 		let yAxis = d3.svg.axis()
-			.scale(d3.scale.linear().domain([0,100]).range([this.state.height,0]))
+			.scale(d3.scale.linear()
+				.domain([0, 100])
+				.range([this.state.height, 0]))
 			.tickSize(-this.state.width)
 			.orient('left');
 		d3.select(this.refs.yAxis)
 			.call(yAxis);
 	},
 	_yScale(v) {
-		return this.state.height *(1 - (v - this.props.time_range[0]) / (this.props.time_range[1] - this.props.time_range[0]));
+		return this.state.height * (1 - (v - this.props.time_range[0]) / (this.props.time_range[1] - this.props.time_range[0]));
 	},
 	_xScale(v) {
 		return this.state.width * v / NUM_CELLS; //LATER CHANGE THIS TO NUM_CELLS;
@@ -77,15 +91,15 @@ const PlotComponent = React.createClass({
 				style={style}>
 				{
 				_(this.props.history)
-					.filter((d, i) => i <= this.props.time)
-					.map((d, i) => {
+					.filter((d, i) => d.time < this.props.time)
+					.map((d,) => {
 						return RectsFactory({
 							cars: d.cars,
 							yScale: this._yScale,
 							xScale: this._xScale,
-							time: i,
-							key: i,
-							h: this.state.height/100*.96
+							time: d.time,
+							key: d.time,
+							h: this.state.height/100
 						});
 					}).value()
 			}
@@ -102,8 +116,9 @@ const PlotComponent = React.createClass({
 			total_height = height + top + bottom,
 			total_width = width + left + right,
 			style = {
-				width: total_width,
-				height: total_height
+				...this.props.style,
+					width: total_width,
+					height: total_height
 			};
 		return (
 			<div 
@@ -134,14 +149,12 @@ const PlotComponent = React.createClass({
 					width={total_width} 
 					height={total_height}>
 					<clipPath id="myClip" >
-						<rect width={width} height={height} transform='translate(0,-50)'/>
+						<rect width={width} height={height+50} transform='translate(0,-50)'/>
 					</clipPath>
 					<g transform={`translate(${left},${top})`} clipPath='url(#myClip)'>
 						<g 
 							style={{transform: `translate(0px,${this._yScale(this.props.time)-4}px)`}}
-							className='g-cars'
-							
-							>
+							className='g-cars'>
 							<rect 
 								width={width} 
 								height={35} 

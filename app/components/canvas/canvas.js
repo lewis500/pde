@@ -23,7 +23,7 @@ const Canvas = createClass({
 	},
 	componentWillUpdate() {
 		if (this.state.mounted) {
-			this.state.ctx.clearRect(0, 0, this.props.width, this.props.height);
+			// this.state.ctx.clearRect(0, 0, this.props.width, this.props.height);
 		}
 	},
 	_makeChildren() {

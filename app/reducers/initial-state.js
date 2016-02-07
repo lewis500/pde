@@ -5,7 +5,7 @@ const {
 } = constants;
 
 const cars = 
-	_(_.sample(_.range(-50,NUM_CELLS-10), 175))
+	_(_.sample(_.range(-50,NUM_CELLS-10), 170))
 	.map((x) => {
 		return {
 			id: _.uniqueId(),
@@ -19,7 +19,8 @@ const cars =
 const initialState = {
 	time: 1,
 	time_range: [0, 100],
-	cars
+	cars,
+	paused: true
 };
 
 export default initialState;

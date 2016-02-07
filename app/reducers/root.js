@@ -10,12 +10,9 @@ const reduceCars = (cars, dt) => {
 	return _.map(cars, (car, i) => {
 			let next = cars[(i + 1)],
 				x0 = car.x;
-			if (!next) {
-				let x = x0 + VF
-				return {
-					...car, x0, x
-				};
-			}
+			if (!next) return {
+				...car, x0, x: x0 + VF
+			};
 			let x = Math.round(Math.max(Math.min(x0 + VF, next.x0 - SPACE), x0));
 			return {
 				...car,
@@ -40,15 +37,16 @@ const reduceCars = (cars, dt) => {
 };
 
 const colorScale = d3.scale.linear()
-	.domain([0, 1])
+	.domain([0, 1 / SPACE])
 	.interpolate(d3.interpolateHcl)
 	.range([col['red']['50'], col.pink['800']]);
 
 const reduceHistory = (state) => {
 	let lastCars = state.cars;
-	let history = _.map(_.range(300), () => {
+	let history = _.map(_.range(300), (i) => {
 		return {
 			cars: lastCars = reduceCars(lastCars),
+			time: i
 		};
 	});
 	return {
@@ -57,18 +55,27 @@ const reduceHistory = (state) => {
 	};
 };
 
-const reduceTime = (state, action) => ({
-	...state,
-	time: action.time,
-		cars: state.history[action.time].cars
-});
+const reduceTime = (state, time) => {
+	let paused = time >= 100 ? true : state.paused;
+	return {
+		...state,
+		paused,
+		time,
+		cars: state.history[time].cars
+	};
+};
 
 const rootReduce = (state = initialState, action) => {
 	switch (action.type) {
 		case 'CALC_HISTORY':
 			return reduceHistory(state);
+		case 'ADVANCE':
+			return reduceTime(state, state.time + 1);
 		case 'SET_TIME':
-			return reduceTime(state, action);
+			return reduceTime(state, action.time);
+		case 'PAUSE_PLAY':
+			return {...state, paused: !state.paused
+			};
 		default:
 			return state;
 	}
