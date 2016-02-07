@@ -29,3 +29,14 @@ svg{
 	opacity: .8;
 
 }
+
+.road{
+	stroke: none;
+	fill: $md-blue-grey-900;
+}
+
+.car{
+	stroke: white;
+	stroke-width: 0.2px;
+	fill: $md-pink-300;
+}

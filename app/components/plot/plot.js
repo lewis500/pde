@@ -13,7 +13,7 @@ const {
 	NUM_CELLS
 } = constants;
 
-const Street = React.createClass({
+const Rects = React.createClass({
 	render() {
 		let {
 			time, xScale, yScale, cells, ctx, w, h
@@ -28,13 +28,13 @@ const Street = React.createClass({
 	}
 });
 
-const StreetFactory = React.createFactory(Street);
+const RectsFactory = React.createFactory(Rects);
 
 const PlotComponent = React.createClass({
 	mixins: [PureRenderMixin],
 	getInitialState() {
 		return {
-			width: 700,
+			width: 1000,
 			height: 300,
 		};
 	},
@@ -46,12 +46,12 @@ const PlotComponent = React.createClass({
 	},
 	componentDidMount(){
 		let xAxis = d3.svg.axis()
-			.scale(d3.scale.linear().domain([0,100]).range([0,this.state.width]))
+			.scale(d3.scale.linear().domain([0,NUM_CELLS]).range([0,this.state.width]))
 			.tickSize(-this.state.height);
 		d3.select(this.refs.xAxis)
 			.call(xAxis);
 		let yAxis = d3.svg.axis()
-			.scale(d3.scale.linear().domain([0,NUM_CELLS]).range([this.state.height,0]))
+			.scale(d3.scale.linear().domain([0,100]).range([this.state.height,0]))
 			.tickSize(-this.state.width)
 			.orient('left');
 		d3.select(this.refs.yAxis)
@@ -67,7 +67,6 @@ const PlotComponent = React.createClass({
 		let style = {
 			top: this.mar.top,
 			left: this.mar.left,
-			// opacity: 
 		};
 		return (
 			<Canvas
@@ -78,8 +77,8 @@ const PlotComponent = React.createClass({
 				_(this.props.history)
 					.filter((d, i) => i <= this.props.time)
 					.map((d, i) => {
-						return StreetFactory({
-							cells: d,
+						return RectsFactory({
+							cells: d.cells,
 							yScale: this._yScale,
 							xScale: this._xScale,
 							time: i,
@@ -112,12 +111,34 @@ const PlotComponent = React.createClass({
 				<svg 
 					width={total_width} 
 					height={total_height}>
-					<g 
-						transform={`translate(${left},${top})`}>
+					<g transform={`translate(${left},${top})`}>
 						<rect 
 							width={width} 
 							height={height} 
 							className='background' />
+						<g 
+							transform={`translate(0,${this._yScale(this.props.time)})`}
+							className='g-cars'>
+							<rect 
+								width={width}
+								height={8}
+								y={-8}
+								className='road'
+								/>
+							{
+								_.map(this.props.history[this.props.time].cars, (car)=>{
+								return (
+									<rect 
+										className='car' 
+										key={car.id}
+										y={-8}
+										height={8}
+										width={1}
+										transform={`translate(${this._xScale(car.x)},0)`}/>
+									);
+								})
+							}
+						</g>
 						<g 
 							ref='xAxis' 
 							className='x axis'

@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import React from 'react';
-import Plot from '../plot/plot2.js';
+import Plot from '../plot/plot.js';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 const {input} = React.DOM;
 import './style-app.scss';
