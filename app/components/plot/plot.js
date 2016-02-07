@@ -135,26 +135,24 @@ const PlotComponent = React.createClass({
 
 					<g transform={`translate(${left},${top})`}>
 						<g 
-							style={{transform: `translate(0px,${this._yScale(this.props.time)-9}px)`}}
+							style={{transform: `translate(0px,${this._yScale(this.props.time)-4}px)`}}
 							className='g-cars'>
 							<rect 
 								width={width} 
 								height={35} 
 								y={-25} 
 								className='cars-bg'/>
-							<rect 
-								width={width}
-								height={4}
-								className='road' />
+							{//<rect width={width} height={4} className='road' />
+							}
 							{
 								_.map(this.props.cars, (car)=>{
 								return (
 									<rect 
 										className='car' 
 										key={car.id}
-										y={-16}
+										y={-13.5}
 										height={12}
-										width={2.5}
+										width={2.6}
 										x={this._xScale(car.x)-1.25}/>
 									);
 								})

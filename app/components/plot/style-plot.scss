@@ -36,13 +36,10 @@ svg{
 
 .canvas{
 	opacity: .95;
-	// filter: url(#f4);
 }
 
 .cars-bg{
 	fill: white;
-	// fill-opacity: .9;
-	// stroke: black;
 	filter: url(#f4);
 }
 
@@ -50,6 +47,7 @@ svg{
 	stroke: none;
 	fill: $md-grey-900;
 	filter: url(#f3);
+	display: none;
 }
 
 .car{
