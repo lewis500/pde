@@ -1,4 +1,4 @@
-@import '~material-colors/dist/colors';
+@import '~material-colors/dist/colors.scss';
 
 .background{
 	fill: $md-grey-100;
@@ -10,4 +10,22 @@ svg{
 
 #plot{
 	position: relative;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: $md-blue-grey-500;
+  stroke-dasharray: 1,1;
+  shape-rendering: crispEdges;
+}
+
+.x.axis,.y.axis path {
+	stroke: $md-blue-grey-900;
+	stroke: 2px;
+}
+
+.canvas{
+	opacity: .8;
+
 }
