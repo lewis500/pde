@@ -16,7 +16,7 @@ const AppComponent = React.createClass({
 				<div style={{display: 'flex'}}>
 					<Plot />
 				</div>
-				<div style={{display: 'flex'}}>
+				<div style={{display: 'flex', width: '100%'}}>
 			    <input type="range" 
 						min="0" 
 						max="100" 

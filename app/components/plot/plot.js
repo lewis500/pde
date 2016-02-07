@@ -16,11 +16,12 @@ const {
 const Rects = React.createClass({
 	render() {
 		let {
-			time, xScale, yScale, cells, ctx, w, h
+			time, xScale, yScale, cars, ctx, h
 		} = this.props,
 			y = yScale(time);
-		_.forEach(cells, (d) => {
-			let x = xScale(d.x);
+		_.forEach(cars, (d,i,l) => {
+			let x = xScale(d.x),
+				w = xScale(d.x + d.gap) - x;
 			ctx.fillStyle = d.fill;
 			ctx.fillRect(x, y, w, h);
 		});
@@ -34,15 +35,15 @@ const PlotComponent = React.createClass({
 	mixins: [PureRenderMixin],
 	getInitialState() {
 		return {
-			width: 1000,
-			height: 300,
+			width: 1100,
+			height: 480,
 		};
 	},
 	mar: {
 		left: 30,
 		top: 30,
 		right: 5,
-		bottom: 50
+		bottom: 30
 	},
 	componentDidMount(){
 		let xAxis = d3.svg.axis()
@@ -78,12 +79,11 @@ const PlotComponent = React.createClass({
 					.filter((d, i) => i <= this.props.time)
 					.map((d, i) => {
 						return RectsFactory({
-							cells: d.cells,
+							cars: d.cars,
 							yScale: this._yScale,
 							xScale: this._xScale,
 							time: i,
 							key: i,
-							w: this.state.width/NUM_CELLS*.98,
 							h: this.state.height/100*.96
 						});
 					}).value()
@@ -111,34 +111,12 @@ const PlotComponent = React.createClass({
 				<svg 
 					width={total_width} 
 					height={total_height}>
+
 					<g transform={`translate(${left},${top})`}>
 						<rect 
 							width={width} 
 							height={height} 
 							className='background' />
-						<g 
-							transform={`translate(0,${this._yScale(this.props.time)})`}
-							className='g-cars'>
-							<rect 
-								width={width}
-								height={8}
-								y={-8}
-								className='road'
-								/>
-							{
-								_.map(this.props.history[this.props.time].cars, (car)=>{
-								return (
-									<rect 
-										className='car' 
-										key={car.id}
-										y={-8}
-										height={8}
-										width={1}
-										transform={`translate(${this._xScale(car.x)},0)`}/>
-									);
-								})
-							}
-						</g>
 						<g 
 							ref='xAxis' 
 							className='x axis'
@@ -151,15 +129,48 @@ const PlotComponent = React.createClass({
 					</g>
 				</svg>
 				{this._renderCanvas()}
+				<svg 
+					width={total_width} 
+					height={total_height}>
+
+					<g transform={`translate(${left},${top})`}>
+						<g 
+							style={{transform: `translate(0px,${this._yScale(this.props.time)-9}px)`}}
+							className='g-cars'>
+							<rect 
+								width={width} 
+								height={35} 
+								y={-25} 
+								className='cars-bg'/>
+							<rect 
+								width={width}
+								height={4}
+								className='road' />
+							{
+								_.map(this.props.cars, (car)=>{
+								return (
+									<rect 
+										className='car' 
+										key={car.id}
+										y={-16}
+										height={12}
+										width={2.5}
+										x={this._xScale(car.x)-1.25}/>
+									);
+								})
+							}
+						</g>
+					</g>
+				</svg>
 			</div>
 		);
 	}
 });
 
 const mapStateToProps = ({
-	cells, time_range, time, history
+	time_range, time, cars, history
 }) => ({
-	cells,
+	cars,
 	history,
 	time_range,
 	time

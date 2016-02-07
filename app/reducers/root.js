@@ -1,73 +1,54 @@
 import d3 from 'd3';
 import _ from 'lodash';
 import initialState from './initial-state';
-
-const q = (k) => {
-	return Math.min(0.5 - 0.5 * k, k);
-};
-
-const colorScale = d3.scale.linear()
-	.domain([0, 1])
-	.interpolate(d3.interpolateHcl)
-	.range(['#29B6F6', '#01579B']);
-
-// const reduceCell = (cell, i, l) => {
-// 	if (_.contains([l.length - 1, 0], i)) return cell;
-// 	const k0 = cell.k,
-// 		last = l[i - 1],
-// 		next = l[i + 1],
-// 		inflow = Math.min(last.k, q(k0), 1 - k0),
-// 		outflow = Math.min(k0, q(next.k), 1 - next.k);
-// 	return {
-// 		...cell,
-// 		k: outflow - inflow,
-// 		fill: 'red'
-// 			// fill: colorScale(outflow - inflow)
-// 	};
-// };
+import col from '../style/colors';
 
 const VF = 1,
 	SPACE = 1;
 
 const reduceCars = (cars, dt) => {
 	return _.map(cars, (car, i) => {
-		if (i == (cars.length - 1)) {
+			if (i == (cars.length - 1)) {
+				return {
+					...car,
+					x0: car.x,
+						x: car.x0 + VF,
+						gap: 100,
+						fill: colorScale(1 / 100)
+				};
+			}
+			let next = cars[(i + 1)],
+				x0 = car.x,
+				x = Math.round(Math.max(Math.min(x0 + VF, next.x0 - SPACE), x0));
 			return {
 				...car,
-				x0: car.x,
-					x: car.x0 + VF,
+				x,
+				x0
 			};
-		}
-		let next = cars[(i + 1)],
-			x0 = car.x,
-			x = Math.round(Math.max(Math.min(x0 + VF, next.x0 - SPACE), x0));
-		return {
-			...car,
-			x,
-			x0
-		};
-	});
+		})
+		.map((car, i, l) => {
+			let next = l[i + 1];
+			if (!next) return car;
+			let gap = next.x - car.x,
+				fill = colorScale(1/gap);
+			return {
+				...car,
+				fill,
+				gap
+			};
+		});
 };
 
-const averageCars = (cells,cars) => {
-	cells = cells.map(d=>({...d,k:0}));
-	_.forEach(cars, (car) => {
-		_.forEach(_.range(-2,2), (i)=>{
-			let cell = cells[car.x+i];
-			if(cell) cell.k = cell.k + 1/5;
-		});
-	});
-	cells = cells.map(d=>({...d, fill: colorScale(d.k)}));
-	return cells;
-};
+const colorScale = d3.scale.linear()
+	.domain([0, 1])
+	.interpolate(d3.interpolateHcl)
+	.range([col['red']['50'],col.pink['800']]);
 
 const reduceHistory = (state) => {
-	let lastCells = state.cells,
-		lastCars = state.cars;
+	let lastCars = state.cars;
 	let history = _.map(_.range(300), () => {
 		return {
 			cars: lastCars = reduceCars(lastCars),
-			cells: lastCells = averageCars(lastCells,lastCars)
 		};
 	});
 	return {
@@ -78,9 +59,8 @@ const reduceHistory = (state) => {
 
 const reduceTime = (state, action) => ({
 	...state,
-	cells: state.history[action.time],
-		time: action.time,
-		cars: reduceCars(state.cars)
+	time: action.time,
+		cars: state.history[action.time].cars
 });
 
 const rootReduce = (state = initialState, action) => {

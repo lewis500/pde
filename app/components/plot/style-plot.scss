@@ -1,7 +1,10 @@
 @import '~material-colors/dist/colors.scss';
+@import '../../style/variables.scss';
 
 .background{
-	fill: $md-grey-100;
+	fill: $md-grey-200;
+	opacity: 0.9;
+	// filter: url(#f4)
 }
 
 svg{
@@ -15,28 +18,45 @@ svg{
 .axis path,
 .axis line {
   fill: none;
-  stroke: $md-blue-grey-500;
+  stroke: $md-blue-grey-900;
   stroke-dasharray: 1,1;
   shape-rendering: crispEdges;
+  opacity: .3;
 }
 
-.x.axis,.y.axis path {
+.x.axis path,.y.axis path {
 	stroke: $md-blue-grey-900;
 	stroke: 2px;
 }
 
-.canvas{
-	opacity: .8;
+.g-cars{
+	transition: transform .15s ease-out;
 
+}
+
+.canvas{
+	opacity: .95;
+	// filter: url(#f4);
+}
+
+.cars-bg{
+	fill: white;
+	// fill-opacity: .9;
+	// stroke: black;
+	filter: url(#f4);
 }
 
 .road{
 	stroke: none;
-	fill: $md-blue-grey-900;
+	fill: $md-grey-900;
+	filter: url(#f3);
 }
 
 .car{
-	stroke: white;
-	stroke-width: 0.2px;
-	fill: $md-pink-300;
+	filter: url(#f3);
+	stroke: $md-grey-900;
+	// stroke: black;
+	stroke-width: 0.8px;
+	fill: $md-red-a200;
+	transition: all .2s ease-in-out;
 }
