@@ -5,7 +5,7 @@ const {
 } = constants;
 
 const cars = 
-	_(_.sample(_.range(NUM_CELLS), 150))
+	_(_.sample(_.range(-50,NUM_CELLS-10), 175))
 	.map((x) => {
 		return {
 			id: _.uniqueId(),

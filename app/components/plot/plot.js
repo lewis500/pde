@@ -20,8 +20,9 @@ const Rects = React.createClass({
 		} = this.props,
 			y = yScale(time);
 		_.forEach(cars, (d,i,l) => {
-			let x = xScale(d.x),
-				w = xScale(d.x + d.gap) - x;
+			if((i===l.length) || (i ==0)) return;
+			let x = xScale(d.x - d.gap0/2),
+				w = xScale(d.x + d.gap1/2) - x;
 			ctx.fillStyle = d.fill;
 			ctx.fillRect(x, y, w, h);
 		});
@@ -35,7 +36,7 @@ const PlotComponent = React.createClass({
 	mixins: [PureRenderMixin],
 	getInitialState() {
 		return {
-			width: 1100,
+			width: 1150,
 			height: 480,
 		};
 	},
@@ -132,18 +133,20 @@ const PlotComponent = React.createClass({
 				<svg 
 					width={total_width} 
 					height={total_height}>
-
-					<g transform={`translate(${left},${top})`}>
+					<clipPath id="myClip" >
+						<rect width={width} height={height} transform='translate(0,-50)'/>
+					</clipPath>
+					<g transform={`translate(${left},${top})`} clipPath='url(#myClip)'>
 						<g 
 							style={{transform: `translate(0px,${this._yScale(this.props.time)-4}px)`}}
-							className='g-cars'>
+							className='g-cars'
+							
+							>
 							<rect 
 								width={width} 
 								height={35} 
 								y={-25} 
-								className='cars-bg'/>
-							{//<rect width={width} height={4} className='road' />
-							}
+								className='cars-bg' />
 							{
 								_.map(this.props.cars, (car)=>{
 								return (

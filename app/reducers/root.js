@@ -8,18 +8,15 @@ const VF = 1,
 
 const reduceCars = (cars, dt) => {
 	return _.map(cars, (car, i) => {
-			if (i == (cars.length - 1)) {
+			let next = cars[(i + 1)],
+				x0 = car.x;
+			if (!next) {
+				let x = x0 + VF
 				return {
-					...car,
-					x0: car.x,
-						x: car.x0 + VF,
-						gap: 100,
-						fill: colorScale(1 / 100)
+					...car, x0, x
 				};
 			}
-			let next = cars[(i + 1)],
-				x0 = car.x,
-				x = Math.round(Math.max(Math.min(x0 + VF, next.x0 - SPACE), x0));
+			let x = Math.round(Math.max(Math.min(x0 + VF, next.x0 - SPACE), x0));
 			return {
 				...car,
 				x,
@@ -27,14 +24,17 @@ const reduceCars = (cars, dt) => {
 			};
 		})
 		.map((car, i, l) => {
-			let next = l[i + 1];
-			if (!next) return car;
-			let gap = next.x - car.x,
-				fill = colorScale(1/gap);
+			let next = l[i + 1],
+				prev = l[i - 1];
+			if (!next || !prev) return car;
+			let gap1 = next.x - car.x,
+				gap0 = car.x - prev.x,
+				fill = colorScale(.5 / gap1 + .5 / gap0);
 			return {
 				...car,
 				fill,
-				gap
+				gap1,
+				gap0
 			};
 		});
 };
@@ -42,7 +42,7 @@ const reduceCars = (cars, dt) => {
 const colorScale = d3.scale.linear()
 	.domain([0, 1])
 	.interpolate(d3.interpolateHcl)
-	.range([col['red']['50'],col.pink['800']]);
+	.range([col['red']['50'], col.pink['800']]);
 
 const reduceHistory = (state) => {
 	let lastCars = state.cars;
